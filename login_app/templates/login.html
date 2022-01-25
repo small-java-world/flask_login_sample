@@ -1,0 +1,19 @@
+<form action="{{ url_for('login') }}" method=post>
+    <div>
+        <label for="InputUserId">ユーザーID</label>
+        <input type="text" id="InputUserId" name=user_id>
+    </div>
+
+    <div>
+        <label for="InputPassword">パスワード</label>
+        <input type="password" id="InputPassword" name=password>
+    </div>
+
+    <button type="submit" id="LoginButton">Login Button</button>
+
+    {% for message in get_flashed_messages() %}
+        <div role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+</form>
