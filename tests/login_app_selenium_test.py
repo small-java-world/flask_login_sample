@@ -1,7 +1,16 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from logging import getLogger, StreamHandler, DEBUG
 from tests.test_common import BASE_URL, LOGIN_FORM_URL
+
+
+logger = getLogger(__name__)
+handler = StreamHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
+logger.propagate = False
 
 
 @pytest.fixture
@@ -13,9 +22,11 @@ def webdriver_chrome() -> webdriver:
 
 def test_top_not_logined(webdriver_chrome: webdriver):
     webdriver_chrome.get(BASE_URL)
+
     login_text = webdriver_chrome.find_element(
         by=By.XPATH, value='//*[contains(., "Log In")]'
     )
+
     assert not login_text is None
 
 
@@ -41,11 +52,12 @@ def test_login_fail(login_fail_fixture):
 
     # ログインが失敗すると"Login Button"が存在する
     login_button = webdriver_chrome.find_element(by=By.ID, value="LoginButton")
-
     assert not login_button == None
 
 
 def login(webdriver_chrome: webdriver, user_id: str, password: str):
+    logger.debug(f"login user_id={user_id} password={password} ")
+
     webdriver_chrome.get(LOGIN_FORM_URL)
 
     input_user_id = webdriver_chrome.find_element(by=By.ID, value="InputUserId")

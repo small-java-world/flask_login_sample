@@ -25,6 +25,8 @@ def login():
     if request.method == "POST":
         user_id = request.form["user_id"]
         password = request.form["password"]
+        logger.debug(type(request))
+        logger.debug(type(request.form))
 
         if user_id:
             try:
@@ -41,6 +43,7 @@ def login():
 
                     login_user(user)
                     flash("ログインしました。")
+
                     return redirect(url_for("top"))
             except DoesNotExist:
                 flash("ユーザーIDもしくはパスワードが不正です。")

@@ -1,7 +1,6 @@
 import pytest
 
 from login_app import app
-
 from logging import getLogger, StreamHandler, DEBUG
 
 logger = getLogger(__name__)
@@ -38,7 +37,8 @@ def login_fail_fixture(request):
 
 def test_login_fail(login_fail_fixture):
     client, user_id, password = login_fail_fixture
-    # ログインが失敗すると"Login Button"
+
+    # ログインが失敗すると"Login Button"を含む
     rv = login(client, user_id, password)
     assert b"Login Button" in rv.data
 
@@ -54,6 +54,8 @@ def test_top_logined(client):
 
 
 def login(client, user_id, password):
+    logger.debug(f"login user_id={user_id} password={password} ")
+
     return client.post(
         "/login", data=dict(user_id=user_id, password=password), follow_redirects=True
     )
