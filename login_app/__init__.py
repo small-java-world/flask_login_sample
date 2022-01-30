@@ -1,10 +1,9 @@
 import os
-from flask import request, redirect, url_for, render_template, flash, session
+from flask import session
 from flask import Flask
-from flask_login import LoginManager, login_user, logout_user
+from flask_login import LoginManager
 from flask_sessionstore import Session
-from datetime import timedelta
-from logging import exception, getLogger, StreamHandler, DEBUG
+from logging import getLogger, StreamHandler, DEBUG
 
 logger = getLogger(__name__)
 handler = StreamHandler()
@@ -45,15 +44,18 @@ app.config.from_object(config_name)
 # user_auth, commonをimportしないとルーティングされない
 from login_app.views import user_auth, common
 
+# セッション管理を有効化
 Session(app)
 
+# flask_loginの初期化
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 from login_app.user_loader import setup_auth
 
+# userをロードするためのcallbackを定義
 setup_auth(login_manager)
 
-
+# @login_requiredが付与されたurlにアクセスし、未ログインの場合はここにリダイレクトされる。
 login_manager.login_view = "login"
 login_manager.login_message = "ログインしてください"

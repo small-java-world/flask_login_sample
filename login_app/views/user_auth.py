@@ -1,7 +1,6 @@
 from flask import request, redirect, url_for, render_template, flash, session
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 
-from login_app.user_loader import setup_auth
 from logging import getLogger, StreamHandler, DEBUG
 from pynamodb.exceptions import DoesNotExist
 from login_app import app
@@ -25,8 +24,6 @@ def login():
     if request.method == "POST":
         user_id = request.form["user_id"]
         password = request.form["password"]
-        logger.debug(type(request))
-        logger.debug(type(request.form))
 
         if user_id:
             try:
@@ -42,6 +39,9 @@ def login():
                     logger.debug(f"login成功 id={user.id}")
 
                     login_user(user)
+
+                    logger.debug(f"call login_user end")
+
                     flash("ログインしました。")
 
                     return redirect(url_for("top"))
@@ -61,3 +61,21 @@ def logout():
     logout_user()
     flash("ログアウトしました。")
     return redirect(url_for("login"))
+
+
+@app.route("/users/detail/<user_id>", methods=["GET"])
+@login_required
+def user_detail(user_id):
+    logger.debug(f"user_detail user_id={user_id} start")
+
+    try:
+        from login_app.models.users import User
+
+        user = User.get(user_id)
+        return render_template("user_detail.html", user=user)
+
+    except DoesNotExist:
+        flash("ユーザが存在しません。")
+        logger.error(f"user_detail ユーザが存在しません。user_id={user_id}")
+
+        return redirect(url_for("top"))

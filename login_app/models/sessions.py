@@ -6,7 +6,7 @@ from login_app import app
 
 class Session(Model):
     class Meta:
-        table_name = "sessions"
+        table_name = app.config.get("SESSION_DYNAMODB_TABLE")
         region = app.config.get("DYNAMODB_REGION")
         aws_access_key_id = app.config.get("AWS_ACCESS_KEY_ID")
         aws_secret_access_key = app.config.get("AWS_SECRET_ACCESS_KEY")
